@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>游民任务 — 让每一份技能都有价格</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#7C3AED;--primary-hover:#6D28D9;--primary-soft:#EDE9FE;--primary-light:#F5F3FF;--accent:#16A34A;--reward:#D97706;--ink:#1E1B2E;--ink-secondary:#6B7280;--ink-muted:#9CA3AF;--surface:#FFFFFF;--canvas:#FAF5FF;--line:#E5E7EB;--shadow:0 1px 2px rgba(17,12,46,.04),0 4px 16px rgba(17,12,46,.06);--shadow-hover:0 8px 30px rgba(17,12,46,.12);--radius:10px;--radius-lg:14px;--radius-sm:6px;--max-w-page:1152px;--max-w-wide:1280px;--max-w-narrow:576px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans','Noto Sans SC',-apple-system,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;background:var(--canvas);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
+::selection{background:var(--primary);color:#fff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#E9D5FF;border-radius:3px}
+a{color:var(--primary);text-decoration:none;transition:color .2s}
+a:hover{color:var(--primary-hover)}
+.container{width:100%;max-width:var(--max-w-page);margin:0 auto;padding:0 16px}
+@media(min-width:640px){.container{padding:0 24px}}
+@media(min-width:1024px){.container{padding:0 32px}}
+.container-wide{max-width:var(--max-w-wide)}
+.container-narrow{max-width:var(--max-w-narrow)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .2s;white-space:nowrap;height:40px;font-family:inherit}
+.btn-lg{height:48px;padding:12px 28px;font-size:16px}
+.btn-sm{height:32px;padding:4px 12px;font-size:13px}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn-primary:hover{background:var(--primary-hover);border-color:var(--primary-hover)}
+.btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.6)}
+.btn-ghost:hover{background:#fff;color:var(--primary);border-color:#fff}
+.btn-outline{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-text{background:transparent;color:var(--ink-secondary);border:none;padding:4px 8px;height:auto}
+.btn-text:hover{color:var(--primary);background:var(--primary-soft);border-radius:var(--radius)}
+.btn-block{display:flex;width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.input{width:100%;height:40px;padding:8px 16px;border:1px solid var(--line);border-radius:var(--radius);font-size:14px;font-family:inherit;background:var(--surface);color:var(--ink);transition:border-color .2s,box-shadow .2s;outline:none}
+.input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(124,58,237,.15)}
+.input-lg{height:48px;font-size:16px}
+.input-round{border-radius:999px}
+.input-icon-wrap{position:relative}
+.input-icon-wrap .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink-muted);pointer-events:none;display:flex}
+.input-icon-wrap .input{padding-left:40px}
+.card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--line);box-shadow:var(--shadow);transition:all .2s}
+.card-hover:hover{box-shadow:var(--shadow-hover);border-color:rgba(124,58,237,.25)}
+.card-padded{padding:20px}
+@media(min-width:768px){.card-padded{padding:24px}}
+.tag{display:inline-flex;align-items:center;padding:2px 10px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;line-height:22px;white-space:nowrap}
+.tag-purple{background:var(--primary-soft);color:var(--primary)}
+.tag-green{background:#DCFCE7;color:#166534}
+.tag-orange{background:#FEF3C7;color:#92400E}
+.tag-blue{background:#DBEAFE;color:#1E40AF}
+.tag-red{background:#FEE2E2;color:#991B1B}
+.tag-gray{background:#F3F4F6;color:var(--ink-secondary)}
+.page-wrap{display:flex;flex-direction:column;min-height:100vh;background:var(--surface)}
+.header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);box-shadow:0 1px 3px rgba(17,12,46,.04)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:64px;max-width:var(--max-w-wide);margin:0 auto;padding:0 16px}
+@media(min-width:640px){.header-inner{padding:0 24px}}
+@media(min-width:1024px){.header-inner{padding:0 32px}}
+.logo{display:flex;align-items:center;gap:8px;flex-shrink:0;cursor:pointer}
+.logo-icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--primary),#A78BFA);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800}
+.logo-text{font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
+.nav{display:none;align-items:center;gap:4px}
+@media(min-width:768px){.nav{display:flex}}
+.nav-item{padding:6px 12px;border-radius:8px;font-size:14px;color:var(--ink-secondary);transition:all .2s;cursor:pointer}
+.nav-item:hover,.nav-item.active{color:var(--primary);background:var(--primary-soft);font-weight:500}
+.header-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.header-auth{display:none;align-items:center;gap:8px}
+@media(min-width:768px){.header-auth{display:flex}}
+.mobile-menu-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:none;background:none;color:var(--ink-secondary);cursor:pointer;border-radius:8px}
+.mobile-menu-btn:hover{background:var(--primary-soft);color:var(--primary)}
+@media(min-width:768px){.mobile-menu-btn{display:none}}
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:60}
+.drawer-overlay.open{display:block}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:280px;max-width:85vw;background:var(--surface);z-index:70;transform:translateX(-100%);transition:transform .3s;padding:24px;overflow-y:auto}
+.drawer.open{transform:translateX(0)}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.drawer-close{width:32px;height:32px;border:none;background:var(--primary-soft);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:18px}
+.drawer-nav{display:flex;flex-direction:column;gap:4px}
+.drawer-nav-item{display:block;padding:10px 12px;border-radius:8px;font-size:15px;color:var(--ink-secondary);transition:all .2s;cursor:pointer}
+.drawer-nav-item:hover,.drawer-nav-item.active{color:var(--primary);background:var(--primary-soft);font-weight:500}
+.drawer-divider{height:1px;background:var(--line);margin:16px 0}
+.drawer-actions{display:flex;flex-direction:column;gap:8px}
+.hero{background:linear-gradient(135deg,var(--primary-soft),var(--surface),var(--canvas));overflow:hidden}
+.hero-content{max-width:768px;margin:0 auto;text-align:center;padding:80px 0}
+@media(min-width:1024px){.hero-content{padding:120px 0}}
+.hero-title{font-size:36px;font-weight:800;line-height:1.2;color:var(--ink);margin-bottom:24px}
+@media(min-width:640px){.hero-title{font-size:48px}}
+@media(min-width:1024px){.hero-title{font-size:60px}}
+.hero-title .highlight{color:var(--primary)}
+.hero-subtitle{font-size:18px;color:var(--ink-secondary);margin-bottom:32px;line-height:1.7}
+@media(min-width:640px){.hero-subtitle{font-size:20px}}
+.hero-search{max-width:560px;margin:0 auto 16px}
+.hero-tags{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin-bottom:32px}
+.hero-tags-label{font-size:13px;color:var(--ink-muted)}
+.hero-tag{font-size:13px;padding:4px 14px;border-radius:999px;background:var(--primary-soft);color:var(--primary);border:none;cursor:pointer;transition:all .2s;font-family:inherit}
+.hero-tag:hover{background:var(--primary);color:#fff}
+.hero-cta{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+@media(min-width:640px){.hero-cta{flex-direction:row}}
+.section{padding:48px 0}
+@media(min-width:768px){.section{padding:64px 0}}
+.section-title{text-align:center;margin-bottom:20px}
+.section-title h2{font-size:28px;font-weight:700;color:var(--ink)}
+@media(min-width:768px){.section-title h2{font-size:32px}}
+.stats{background:var(--surface)}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:var(--max-w-page);margin:0 auto;padding:0 16px}
+@media(min-width:640px){.stats-grid{padding:0 24px}}
+@media(min-width:768px){.stats-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1024px){.stats-grid{padding:0 32px}}
+.stat-card{text-align:center;padding:24px;border-radius:var(--radius-lg);border:1px solid var(--line)}
+.stat-value{font-size:30px;font-weight:700;color:var(--primary);margin-bottom:4px}
+.stat-value.accent{color:var(--accent)}
+.stat-value.reward{color:var(--reward)}
+.stat-label{font-size:14px;color:var(--ink-secondary)}
+.grid-2{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:640px){.grid-2{grid-template-columns:repeat(2,1fr)}}
+.grid-3{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:768px){.grid-3{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1024px){.grid-3{grid-template-columns:repeat(3,1fr)}}
+.grid-4{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(min-width:640px){.grid-4{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1024px){.grid-4{grid-template-columns:repeat(4,1fr)}}
+.cat-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--line);padding:20px;text-align:center;cursor:pointer;transition:all .2s}
+.cat-card:hover{box-shadow:var(--shadow-hover);border-color:rgba(124,58,237,.25)}
+.cat-card-title{font-size:18px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.cat-card-action{font-size:13px;color:var(--ink-muted)}
+.task-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--line);padding:20px;cursor:pointer;transition:all .2s}
+.task-card:hover{box-shadow:var(--shadow-hover);border-color:rgba(124,58,237,.25)}
+.task-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+.task-card-title{font-size:16px;font-weight:600;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:1;transition:color .2s}
+.task-card:hover .task-card-title{color:var(--primary)}
+.task-card-desc{font-size:14px;color:var(--ink-secondary);margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.task-card-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.task-card-reward{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.task-card-price{font-size:20px;font-weight:700;color:var(--reward)}
+.task-card-applicants{font-size:14px;color:var(--ink-muted)}
+.task-card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid #F9FAFB}
+.task-card-publisher{display:flex;align-items:center;gap:8px}
+.task-card-avatar{width:24px;height:24px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--primary);font-weight:600;flex-shrink:0}
+.task-card-name{font-size:14px;color:var(--ink-secondary);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.task-card-meta{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--ink-muted)}
+.trust{background:var(--primary-soft)}
+.trust-grid{display:grid;grid-template-columns:1fr;gap:16px;max-width:var(--max-w-page);margin:0 auto;padding:0 16px}
+@media(min-width:640px){.trust-grid{padding:0 24px}}
+@media(min-width:768px){.trust-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1024px){.trust-grid{padding:0 32px}}
+.trust-card{background:var(--surface);border-radius:var(--radius-lg);padding:24px;transition:box-shadow .2s}
+.trust-card:hover{box-shadow:var(--shadow-hover)}
+.trust-icon{width:40px;height:40px;border-radius:8px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:22px}
+.trust-title{font-size:18px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.trust-desc{font-size:14px;color:var(--ink-secondary);line-height:1.6}
+.cta-banner{background:linear-gradient(135deg,var(--primary),#A78BFA);padding:80px 0;text-align:center}
+.cta-banner h2{font-size:30px;font-weight:700;color:#fff;margin-bottom:16px}
+@media(min-width:768px){.cta-banner h2{font-size:36px}}
+.cta-banner p{font-size:18px;color:rgba(255,255,255,.8);margin-bottom:32px}
+.footer{background:var(--canvas);border-top:1px solid var(--line);padding:48px 0}
+.footer-grid{display:grid;grid-template-columns:1fr;gap:32px;max-width:var(--max-w-page);margin:0 auto;padding:0 16px}
+@media(min-width:640px){.footer-grid{padding:0 24px}}
+@media(min-width:768px){.footer-grid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1024px){.footer-grid{padding:0 32px}}
+.footer-brand p{font-size:14px;color:var(--ink-secondary);line-height:1.7;margin-top:12px}
+.footer-col h4{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:12px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.footer-col ul li a{font-size:14px;color:var(--ink-secondary);transition:color .2s}
+.footer-col ul li a:hover{color:var(--primary)}
+.footer-bottom{text-align:center;margin-top:40px;padding-top:24px;border-top:1px solid var(--line);max-width:var(--max-w-page);margin-left:auto;margin-right:auto;padding-left:16px;padding-right:16px}
+@media(min-width:640px){.footer-bottom{padding-left:24px;padding-right:24px}}
+@media(min-width:1024px){.footer-bottom{padding-left:32px;padding-right:32px}}
+.footer-bottom p{font-size:13px;color:var(--ink-muted)}
+.auth-page{display:flex;min-height:100vh;background:var(--canvas)}
+.auth-brand{display:none}
+@media(min-width:1024px){.auth-brand{display:flex;width:50%;background:linear-gradient(135deg,var(--primary),#A78BFA);align-items:center;justify-content:center;padding:48px;position:relative;overflow:hidden}}
+.auth-brand-content{position:relative;z-index:10;max-width:448px;color:#fff}
+.auth-brand-logo{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+.auth-brand-logo .icon-box{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.2);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;font-size:22px}
+.auth-brand-logo span{font-size:24px;font-weight:700}
+.auth-brand h2{font-size:36px;font-weight:800;line-height:1.2;margin-bottom:16px}
+.auth-brand p{font-size:18px;color:rgba(255,255,255,.8);margin-bottom:40px}
+.auth-features{display:flex;flex-direction:column;gap:20px}
+.auth-feature{display:flex;align-items:flex-start;gap:12px;padding:16px;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);border-radius:12px}
+.auth-feature-icon{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.auth-feature-text .f-title{font-weight:600;font-size:15px}
+.auth-feature-text .f-desc{font-size:13px;color:rgba(255,255,255,.7);margin-top:2px}
+.auth-form-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:16px 24px}
+.auth-form-inner{width:100%;max-width:var(--max-w-narrow)}
+.auth-form-box{background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow);border:1px solid var(--line);padding:32px}
+.auth-form-box h1{font-size:24px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:4px}
+.auth-form-box .auth-subtitle{font-size:14px;color:var(--ink-secondary);text-align:center;margin-bottom:24px}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:14px;font-weight:500;color:var(--ink);margin-bottom:6px}
+.form-group .input{width:100%}
+.form-checkbox{display:flex;align-items:flex-start;gap:8px;font-size:14px;color:var(--ink-secondary);margin-bottom:24px;cursor:pointer}
+.form-checkbox input{margin-top:3px;accent-color:var(--primary)}
+.form-footer{text-align:center;margin-top:16px;font-size:14px;color:var(--ink-secondary)}
+.form-footer a{color:var(--primary);font-weight:500}
+.page-section{padding:32px 0}
+.page-header{display:flex;flex-direction:column;gap:8px;margin-bottom:32px;max-width:var(--max-w-page);margin-left:auto;margin-right:auto;padding:0 16px}
+@media(min-width:640px){.page-header{flex-direction:row;align-items:center;justify-content:space-between;padding:0 24px}}
+@media(min-width:1024px){.page-header{padding:0 32px}}
+.page-header h1{font-size:28px;font-weight:700;color:var(--ink)}
+.page-header p{font-size:14px;color:var(--ink-secondary);margin-top:4px}
+.filter-sidebar{display:none}
+@media(min-width:1024px){.filter-sidebar{display:block;width:240px;flex-shrink:0}}
+.filter-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--line);padding:20px;position:sticky;top:88px}
+.filter-card h3{font-size:16px;font-weight:600;color:var(--ink);margin-bottom:20px}
+.filter-group{margin-bottom:24px}
+.filter-group:last-child{margin-bottom:0}
+.filter-group h4{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-muted);margin-bottom:12px}
+.filter-radio{display:flex;flex-direction:column;gap:8px}
+.filter-radio label{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink-secondary);cursor:pointer}
+.filter-radio input[type=radio]{accent-color:var(--primary)}
+.search-bar{display:flex;flex-direction:column;gap:12px;margin-bottom:24px;max-width:var(--max-w-page);margin-left:auto;margin-right:auto;padding:0 16px}
+@media(min-width:640px){.search-bar{flex-direction:row;padding:0 24px}}
+@media(min-width:1024px){.search-bar{padding:0 32px}}
+.search-bar .input{flex:1}
+.listing-layout{display:flex;gap:32px;max-width:var(--max-w-page);margin:0 auto;padding:0 16px}
+@media(min-width:640px){.listing-layout{padding:0 24px}}
+@media(min-width:1024px){.listing-layout{padding:0 32px}}
+.listing-main{flex:1;min-width:0}
+.result-count{font-size:14px;color:var(--ink-secondary);margin-bottom:16px}
+.result-count span{font-weight:600;color:var(--ink)}
+.pagination{display:flex;justify-content:center;gap:4px;margin-top:32px}
+.pagination button{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:14px;color:var(--ink-secondary);transition:all .2s;font-family:inherit}
+.pagination button:hover{border-color:var(--primary);color:var(--primary)}
+.pagination button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:24px;max-width:var(--max-w-page);margin-left:auto;margin-right:auto;padding:0 16px;overflow-x:auto}
+@media(min-width:640px){.tabs{padding:0 24px}}
+@media(min-width:1024px){.tabs{padding:0 32px}}
+.tab{padding:10px 20px;font-size:15px;font-weight:500;color:var(--ink-secondary);border:none;background:none;cursor:pointer;transition:all .2s;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;font-family:inherit}
+.tab:hover{color:var(--primary)}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.table-wrap{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--line);overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:12px 16px;font-size:13px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.05em;background:#F9FAFB;border-bottom:1px solid var(--line)}
+td{padding:12px 16px;font-size:14px;color:var(--ink-secondary);border-bottom:1px solid #F3F4F6}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFAFA}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:80;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius-lg);box-shadow:0 20px 60px rgba(17,12,46,.2);width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0}
+.modal-header h3{font-size:18px;font-weight:600;color:var(--ink)}
+.modal-close{width:32px;height:32px;border:none;background:var(--primary-soft);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:16px}
+.modal-body{padding:20px 24px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:16px 24px 20px;border-top:1px solid var(--line)}
+.balance-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:24px}
+@media(min-width:640px){.balance-grid{grid-template-columns:repeat(3,1fr)}}
+.balance-card{text-align:center;padding:24px;border-radius:var(--radius-lg);border:1px solid var(--line);background:var(--surface)}
+.balance-card .label{font-size:14px;color:var(--ink-muted);margin-bottom:8px}
+.balance-card .value{font-size:28px;font-weight:700}
+.balance-card .value.primary{color:var(--primary)}
+.balance-card .value.warning{color:var(--reward)}
+.balance-card .value.accent{color:var(--accent)}
+.notif-list{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--line)}
+.notif-item{display:flex;align-items:flex-start;gap:16px;padding:16px 24px;border-bottom:1px solid #F3F4F6;transition:background .2s}
+.notif-item:last-child{border-bottom:none}
+.notif-item.unread{background:rgba(124,58,237,.03)}
+.notif-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0}
+.notif-icon.unread{background:var(--primary)}
+.notif-icon.read{background:var(--ink-muted)}
+.notif-content{flex:1;min-width:0}
+.notif-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.notif-title .title-text{font-size:14px;font-weight:600;color:var(--ink)}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);display:inline-block;flex-shrink:0}
+.notif-body{font-size:14px;color:var(--ink-secondary);margin-top:4px;line-height:1.5}
+.notif-time{font-size:12px;color:var(--ink-muted);margin-top:4px;display:block}
+.detail-layout{display:grid;grid-template-columns:1fr;gap:32px;max-width:var(--max-w-page);margin:0 auto;padding:0 16px}
+@media(min-width:640px){.detail-layout{padding:0 24px}}
+@media(min-width:1024px){.detail-layout{grid-template-columns:2fr 1fr;padding:0 32px}}
+.detail-main{display:flex;flex-direction:column;gap:24px}
+.detail-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--line);padding:24px}
+.detail-title{font-size:28px;font-weight:700;color:var(--ink);margin-bottom:12px}
+.detail-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.detail-date{font-size:13px;color:var(--ink-muted)}
+.detail-desc{font-size:15px;color:var(--ink-secondary);line-height:1.8;white-space:pre-wrap}
+.detail-sidebar{display:flex;flex-direction:column;gap:24px}
+.detail-reward-card{text-align:center;padding:24px;background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--line);box-shadow:var(--shadow)}
+.detail-reward-card .reward-label{font-size:14px;color:var(--ink-muted);margin-bottom:8px}
+.detail-reward-card .reward-amount{font-size:36px;font-weight:700;color:var(--reward)}
+.detail-info{display:flex;flex-direction:column;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.detail-info-item{display:flex;justify-content:space-between;font-size:14px;color:var(--ink-secondary)}
+.detail-info-item .label{display:flex;align-items:center;gap:6px;color:var(--ink-muted)}
+.detail-publisher{padding:24px;background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--line)}
+.detail-publisher h3{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-muted);margin-bottom:16px}
+.detail-publisher-info{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.detail-publisher-avatar{width:48px;height:48px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--primary);font-weight:600;border:2px solid var(--primary-soft);flex-shrink:0}
+.detail-publisher-name{font-size:16px;font-weight:600;color:var(--ink)}
+.detail-publisher-bio{font-size:14px;color:var(--ink-secondary)}
+.page{display:none}
+.page.active{display:block}
+.back-btn{display:inline-flex;align-items:center;gap:8px;padding:4px 8px;font-size:14px;color:var(--ink-secondary);cursor:pointer;border:none;background:none;transition:color .2s;margin-bottom:16px;border-radius:6px;font-family:inherit}
+.back-btn:hover{color:var(--primary);background:var(--primary-soft)}
+.post-detail{max-width:768px;margin:0 auto;padding:0 16px}
+@media(min-width:640px){.post-detail{padding:0 24px}}
+.post-author{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.post-author-left{display:flex;align-items:center;gap:12px}
+.post-avatar{width:40px;height:40px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--primary);flex-shrink:0}
+.post-author-name{font-size:15px;font-weight:600;color:var(--ink)}
+.post-author-meta{font-size:12px;color:var(--ink-muted);margin-top:2px}
+.post-title{font-size:28px;font-weight:700;color:var(--ink);margin-bottom:16px}
+@media(min-width:768px){.post-title{font-size:32px}}
+.post-content{font-size:15px;color:var(--ink-secondary);line-height:1.8;white-space:pre-wrap;margin-bottom:24px}
+.post-actions{display:flex;align-items:center;gap:24px;padding:16px 0;border-top:1px solid var(--line);margin-bottom:32px}
+.post-action-btn{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--ink-muted);background:none;border:none;cursor:pointer;transition:color .2s;padding:4px 8px;border-radius:6px;font-family:inherit}
+.post-action-btn:hover{color:var(--primary)}
+.post-action-btn.liked{color:var(--primary)}
+.comment-section{padding-top:24px;border-top:1px solid var(--line);margin-bottom:48px}
+.comment-section h3{font-size:18px;font-weight:600;color:var(--ink);margin-bottom:20px}
+.comment-input-wrap{display:flex;gap:12px;margin-bottom:24px}
+.comment-input-wrap .input{flex:1}
+.comment-item{display:flex;gap:12px;padding:16px 0;border-bottom:1px solid #F3F4F6}
+.comment-item:last-child{border-bottom:none}
+.comment-avatar{width:32px;height:32px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--primary);flex-shrink:0}
+.comment-text{font-size:14px;color:var(--ink-secondary);margin-top:4px;line-height:1.6}
+.community-grid{display:grid;grid-template-columns:1fr;gap:20px}
+@media(min-width:768px){.community-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1280px){.community-grid{grid-template-columns:repeat(3,1fr)}}
+.post-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--line);padding:20px;cursor:pointer;transition:all .2s}
+.post-card:hover{box-shadow:var(--shadow-hover);border-color:rgba(124,58,237,.25)}
+.post-card-author{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.post-card-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--primary);flex-shrink:0}
+.post-card-name{font-size:14px;font-weight:600;color:var(--ink)}
+.post-card-time{font-size:12px;color:var(--ink-muted)}
+.post-card-title{font-size:16px;font-weight:600;color:var(--ink);margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.post-card-excerpt{font-size:14px;color:var(--ink-secondary);margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.post-card-stats{display:flex;gap:16px;font-size:13px;color:var(--ink-muted);padding-top:12px;border-top:1px solid #F3F4F6}
+.profile-page{max-width:896px;margin:0 auto;padding:32px 16px}
+.profile-page h1{font-size:24px;font-weight:700;color:var(--ink);margin-bottom:24px}
+.profile-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--line);padding:24px}
+.avatar-section{display:flex;align-items:center;gap:24px;margin-bottom:32px}
+.avatar-large{width:80px;height:80px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;font-weight:600;flex-shrink:0}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 0;text-align:center}
+.empty-state .empty-icon{font-size:48px;color:var(--ink-muted);margin-bottom:16px}
+.empty-state h3{font-size:18px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.empty-state p{font-size:14px;color:var(--ink-secondary);margin-bottom:24px}
+.radio-group{display:flex;gap:0;border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;flex-wrap:wrap}
+.radio-group button{padding:4px 16px;border:none;background:var(--surface);font-size:13px;color:var(--ink-secondary);cursor:pointer;transition:all .2s;border-right:1px solid var(--line);font-family:inherit}
+.radio-group button:last-child{border-right:none}
+.radio-group button:hover{color:var(--primary)}
+.radio-group button.active{background:var(--primary);color:#fff}
+.content-area{max-width:var(--max-w-page);margin:0 auto;padding:0 16px}
+@media(min-width:640px){.content-area{padding:0 24px}}
+@media(min-width:1024px){.content-area{padding:0 32px}}
+.content-wide{max-width:var(--max-w-wide)}
+.content-narrow{max-width:var(--max-w-narrow)}
+.steps{display:flex;gap:8px;margin-bottom:32px}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
+.step:not(:last-child)::after{content:'';position:absolute;top:16px;left:calc(50% + 20px);right:calc(-50% + 20px);height:2px;background:var(--line)}
+.step.active:not(:last-child)::after{background:var(--primary)}
+.step-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;background:var(--line);color:var(--ink-muted);margin-bottom:8px;position:relative;z-index:1}
+.step.active .step-num{background:var(--primary);color:#fff}
+.step-title{font-size:13px;font-weight:500;color:var(--ink-muted);text-align:center}
+.step.active .step-title{color:var(--ink);font-weight:600}
+.step-desc{font-size:11px;color:var(--ink-muted);text-align:center;display:none}
+@media(min-width:640px){.step-desc{display:block}}
+.step-nav{display:flex;justify-content:space-between;margin-top:24px;max-width:var(--max-w-narrow);margin-left:auto;margin-right:auto}
+.review-preview{padding:16px;background:var(--primary-soft);border-radius:8px;font-size:14px;color:var(--primary);margin-top:24px}
+.select{width:100%;height:40px;padding:8px 16px;border:1px solid var(--line);border-radius:var(--radius);font-size:14px;font-family:inherit;background:var(--surface);color:var(--ink);transition:border-color .2s;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(124,58,237,.15)}
+.quick-amounts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.quick-amounts button{padding:6px 16px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);cursor:pointer;font-size:14px;color:var(--ink-secondary);transition:all .2s;font-family:inherit}
+.quick-amounts button:hover{border-color:var(--primary);color:var(--primary)}
+.balance-hint{background:var(--primary-soft);border-radius:8px;padding:12px;margin-bottom:16px;font-size:14px;color:var(--primary)}
+@media(max-width:639px){
+  .hero-title{font-size:28px}
+  .hero-content{padding:48px 0}
+  .section{padding:32px 0}
+  .auth-form-box{padding:20px}
+  .detail-title{font-size:22px}
+  .detail-reward-card .reward-amount{font-size:28px}
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+  <!-- ===== Header ===== -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo" onclick="navigateTo('home')">
+        <div class="logo-icon">⟐</div>
+        <span class="logo-text">游民任务</span>
+      </div>
+      <nav class="nav">
+        <span class="nav-item" data-nav="explore" onclick="navigateTo('explore')">发现</span>
+        <span class="nav-item" data-nav="tasks" onclick="navigateTo('tasks')">任务大厅</span>
+        <span class="nav-item" data-nav="community" onclick="navigateTo('community')">社区</span>
+      </nav>
+      <div class="header-actions">
+        <div class="header-auth" id="headerAuth">
+          <button class="btn btn-text" onclick="navigateTo('login')">登录</button>
+          <button class="btn btn-primary" onclick="navigateTo('register')">注册</button>
+        </div>
+        <div class="header-auth" id="headerUser" style="display:none">
+          <button class="btn btn-primary btn-sm" onclick="navigateTo('tasks')" style="height:32px;padding:4px 12px;font-size:13px">发布任务</button>
+          <span style="position:relative;cursor:pointer" onclick="navigateTo('notifications')">🔔</span>
+          <span style="cursor:pointer" onclick="toggleUserMenu()">👤</span>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+      </div>
+      <div id="userMenu" style="display:none;position:absolute;top:56px;right:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-hover);padding:8px;min-width:180px;z-index:100">
+        <div style="padding:8px 12px;cursor:pointer;border-radius:6px;transition:background .2s" onmouseover="this.style.background='var(--primary-soft)'" onmouseout="this.style.background=''" onclick="navigateTo('profile');hideUserMenu()">👤 个人设置</div>
+        <div style="padding:8px 12px;cursor:pointer;border-radius:6px;transition:background .2s" onmouseover="this.style.background='var(--primary-soft)'" onmouseout="this.style.background=''" onclick="navigateTo('wallet');hideUserMenu()">💰 我的钱包</div>
+        <div style="padding:8px 12px;cursor:pointer;border-radius:6px;transition:background .2s" onmouseover="this.style.background='var(--primary-soft)'" onmouseout="this.style.background=''" onclick="navigateTo('published');hideUserMenu()">📄 我发布的任务</div>
+        <div style="padding:8px 12px;cursor:pointer;border-radius:6px;transition:background .2s" onmouseover="this.style.background='var(--primary-soft)'" onmouseout="this.style.background=''" onclick="navigateTo('applied');hideUserMenu()">📋 我接取的任务</div>
+        <div style="height:1px;background:var(--line);margin:4px 0"></div>
+        <div style="padding:8px 12px;cursor:pointer;border-radius:6px;color:#EF4444;transition:background .2s" onmouseover="this.style.background='#FEE2E2'" onmouseout="this.style.background=''" onclick="handleLogout()">🚪 退出登录</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== Mobile Drawer ===== -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div class="logo">
+        <div class="logo-icon">⟐</div>
+        <span class="logo-text">游民任务</span>
+      </div>
+      <button class="drawer-close" onclick="toggleDrawer()">✕</button>
+    </div>
+    <div class="drawer-nav">
+      <span class="drawer-nav-item" onclick="navigateTo('home');toggleDrawer()">首页</span>
+      <span class="drawer-nav-item" onclick="navigateTo('explore');toggleDrawer()">发现</span>
+      <span class="drawer-nav-item" onclick="navigateTo('tasks');toggleDrawer()">任务大厅</span>
+      <span class="drawer-nav-item" onclick="navigateTo('community');toggleDrawer()">社区</span>
+    </div>
+    <div class="drawer-divider"></div>
+    <div class="drawer-actions">
+      <button class="btn btn-outline btn-block" onclick="navigateTo('login');toggleDrawer()">登录</button>
+      <button class="btn btn-primary btn-block" onclick="navigateTo('register');toggleDrawer()">注册</button>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: Home ===== -->
+  <div class="page active" id="page-home">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-content">
+        <h1 class="hero-title">让每一份<span class="highlight">技能</span>都有价格</h1>
+        <p class="hero-subtitle">发布任务或接取任务，与全球数字游民一起自由协作</p>
+        <div class="hero-search">
+          <div class="input-icon-wrap">
+            <span class="input-icon">🔍</span>
+            <input class="input input-round input-lg" placeholder="搜索任务关键词…" id="heroSearchInput" onkeydown="if(event.key==='Enter')heroSearch()">
+          </div>
+        </div>
+        <div class="hero-tags">
+          <span class="hero-tags-label">热门搜索：</span>
+          <button class="hero-tag" onclick="searchTag('设计')">设计</button>
+          <button class="hero-tag" onclick="searchTag('开发')">开发</button>
+          <button class="hero-tag" onclick="searchTag('翻译')">翻译</button>
+          <button class="hero-tag" onclick="searchTag('文案')">文案</button>
+          <button class="hero-tag" onclick="searchTag('¥500+')">¥500+</button>
+        </div>
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" onclick="navigateTo('register')">免费注册</button>
+          <button class="btn btn-outline btn-lg" onclick="navigateTo('login')">已有账号？登录</button>
+          <button class="btn btn-outline btn-lg" onclick="navigateTo('tasks')">发布任务</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats section">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-value">12,000+</div><div class="stat-label">注册游民</div></div>
+        <div class="stat-card"><div class="stat-value accent">3,200+</div><div class="stat-label">进行中任务</div></div>
+        <div class="stat-card"><div class="stat-value reward">¥860万+</div><div class="stat-label">累计成交</div></div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="section">
+      <div class="section-title"><h2>浏览分类</h2></div>
+      <div class="container">
+        <div class="grid-4" id="categoriesGrid"></div>
+      </div>
+    </section>
+
+    <!-- Featured Tasks -->
+    <section class="section" id="featuredSection">
+      <div class="section-title"><h2>热门任务</h2></div>
+      <div class="container">
+        <div class="grid-4" id="featuredGrid"></div>
+        <div style="text-align:right;margin-top:16px">
+          <a href="#" onclick="navigateTo('tasks');return false" style="font-size:14px">查看全部 →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust -->
+    <section class="trust section">
+      <div class="section-title"><h2>安全可靠的交易保障</h2><p style="font-size:14px;color:var(--ink-secondary);margin-top:8px">我们确保每一笔交易都公平、安全</p></div>
+      <div class="trust-grid">
+        <div class="trust-card">
+          <div class="trust-icon">🛡</div>
+          <div class="trust-title">实名认证</div>
+          <div class="trust-desc">真实身份保障，交易双方都放心</div>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon">⚡</div>
+          <div class="trust-title">资金担保</div>
+          <div class="trust-desc">平台托管赏金，完成自动到账</div>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon">🌐</div>
+          <div class="trust-title">远程协作</div>
+          <div class="trust-desc">线上线下自由选择工作方式</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-banner">
+      <div class="container">
+        <h2>准备好开始了吗？</h2>
+        <p>免费注册，立即获取远程工作机会</p>
+        <button class="btn btn-ghost btn-lg" onclick="navigateTo('register')">免费注册</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== PAGE: Login ===== -->
+  <div class="page" id="page-login">
+    <div class="auth-page">
+      <div class="auth-brand">
+        <div class="auth-brand-content">
+          <div class="auth-brand-logo">
+            <div class="icon-box">⟐</div>
+            <span>游民任务</span>
+          </div>
+          <h2>让每一份技能<br>都有价格</h2>
+          <p>连接全球远程工作者，发现适合你的自由工作机会</p>
+          <div class="auth-features">
+            <div class="auth-feature">
+              <div class="auth-feature-icon">🛡</div>
+              <div class="auth-feature-text"><div class="f-title">资金担保</div><div class="f-desc">平台托管赏金，完成自动到账</div></div>
+            </div>
+            <div class="auth-feature">
+              <div class="auth-feature-icon">⚡</div>
+              <div class="auth-feature-text"><div class="f-title">实名认证</div><div class="f-desc">真实身份保障，交易更放心</div></div>
+            </div>
+            <div class="auth-feature">
+              <div class="auth-feature-icon">🌐</div>
+              <div class="auth-feature-text"><div class="f-title">远程协作</div><div class="f-desc">线上线下自由选择工作方式</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="auth-form-wrap">
+        <div class="auth-form-inner">
+          <div class="auth-mobile-logo" style="display:flex;justify-content:center;margin-bottom:32px">
+            <div class="logo"><div class="logo-icon">⟐</div><span class="logo-text">游民任务</span></div>
+          </div>
+          <div class="auth-form-box">
+            <h1>欢迎回来</h1>
+            <p class="auth-subtitle">登录你的游民任务账号</p>
+            <form onsubmit="handleLogin(event)">
+              <div class="form-group">
+                <label>用户名</label>
+                <div class="input-icon-wrap">
+                  <span class="input-icon">✉</span>
+                  <input class="input" type="text" placeholder="请输入用户名" id="loginUsername" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>密码</label>
+                <div class="input-icon-wrap">
+                  <span class="input-icon">🔒</span>
+                  <input class="input" type="password" placeholder="请输入密码" id="loginPassword" required>
+                </div>
+              </div>
+              <button class="btn btn-primary btn-block btn-lg" type="submit">登录</button>
+              <div class="form-footer">还没有账号？<a href="#" onclick="navigateTo('register');return false">立即注册</a></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: Task List ===== -->
+  <div class="page" id="page-tasks">
+    <div class="page-section">
+      <div class="page-header">
+        <div><h1>任务大厅</h1><p>找到适合你的下一单</p></div>
+        <button class="btn btn-primary btn-lg" onclick="navigateTo('tasks')">发布任务</button>
+      </div>
+      <div class="search-bar">
+        <div class="input-icon-wrap" style="flex:1">
+          <span class="input-icon">🔍</span>
+          <input class="input input-round input-lg" placeholder="搜索任务标题、描述..." id="taskSearchInput" oninput="filterTasks()">
+        </div>
+        <div style="display:flex;gap:8px">
+          <select class="select" id="taskSortBy" onchange="filterTasks()" style="width:160px">
+            <option value="createdAt">最新发布</option>
+            <option value="reward">赏金最高</option>
+            <option value="deadline">即将截止</option>
+          </select>
+        </div>
+      </div>
+      <div class="listing-layout">
+        <aside class="filter-sidebar">
+          <div class="filter-card">
+            <h3>筛选条件</h3>
+            <div class="filter-group">
+              <h4>任务类别</h4>
+              <div class="filter-radio" id="taskCategoryFilter"></div>
+            </div>
+            <div class="filter-group">
+              <h4>工作类型</h4>
+              <div class="filter-radio">
+                <label><input type="radio" name="typeFilter" value="" checked onchange="filterTasks()"> 全部类型</label>
+                <label><input type="radio" name="typeFilter" value="online" onchange="filterTasks()"> 远程</label>
+                <label><input type="radio" name="typeFilter" value="offline" onchange="filterTasks()"> 线下</label>
+              </div>
+            </div>
+            <button class="btn btn-outline btn-block" onclick="resetFilters()" style="margin-top:16px">重置筛选</button>
+          </div>
+        </aside>
+        <div class="listing-main">
+          <div class="result-count">共找到 <span id="taskCount">0</span> 个任务</div>
+          <div class="grid-3" id="taskGrid"></div>
+          <div class="pagination" id="taskPagination"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: Task Detail ===== -->
+  <div class="page" id="page-task-detail">
+    <div class="page-section">
+      <div class="detail-layout" id="taskDetailContent"></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: Explore ===== -->
+  <div class="page" id="page-explore">
+    <div class="page-section">
+      <div class="content-area content-wide">
+        <div class="input-icon-wrap" style="max-width:560px;margin:0 auto 32px">
+          <span class="input-icon">🔍</span>
+          <input class="input input-round input-lg" placeholder="搜索你感兴趣的任务..." id="exploreSearch" onkeydown="if(event.key==='Enter')exploreSearch()">
+        </div>
+        <div id="exploreContent">
+          <section class="section" style="padding-top:0">
+            <h2 style="font-size:22px;font-weight:700;color:var(--ink);margin-bottom:16px">🧭 为你推荐</h2>
+            <p style="font-size:14px;color:var(--ink-secondary);margin-bottom:16px">基于你的兴趣和历史，为你精选的任务</p>
+            <div class="grid-4" id="exploreRecommended"></div>
+          </section>
+          <section class="section">
+            <h2 style="font-size:22px;font-weight:700;color:var(--ink);margin-bottom:16px">🔥 热门任务</h2>
+            <p style="font-size:14px;color:var(--ink-secondary);margin-bottom:16px">当前最受欢迎的任务</p>
+            <div class="grid-4" id="explorePopular"></div>
+          </section>
+          <section class="section">
+            <h2 style="font-size:22px;font-weight:700;color:var(--ink);margin-bottom:16px">📂 分类浏览</h2>
+            <p style="font-size:14px;color:var(--ink-secondary);margin-bottom:16px">按任务类型探索</p>
+            <div class="grid-4" id="exploreCategories"></div>
+          </section>
+        </div>
+        <div id="exploreResults" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: Community ===== -->
+  <div class="page" id="page-community">
+    <div class="page-section">
+      <div class="content-area content-wide">
+        <div class="page-header">
+          <div><h1>社区</h1><p>分享经验、发现志同道合的人</p></div>
+        </div>
+        <div class="tabs">
+          <button class="tab active" data-tab="posts" onclick="switchCommunityTab('posts')">广场</button>
+          <button class="tab" data-tab="authors" onclick="switchCommunityTab('authors')">活跃作者</button>
+          <button class="tab" data-tab="reviews" onclick="switchCommunityTab('reviews')">最新评价</button>
+        </div>
+        <div id="communityPosts">
+          <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px;align-items:center;justify-content:space-between">
+            <button class="btn btn-primary" onclick="alert('请先登录后发帖')">＋ 发帖</button>
+            <input class="input input-round" placeholder="搜索帖子…" style="max-width:320px" id="postSearchInput" oninput="filterPosts()">
+          </div>
+          <div class="community-grid" id="postsGrid"></div>
+        </div>
+        <div id="communityAuthors" style="display:none">
+          <div class="grid-3" id="authorsGrid"></div>
+        </div>
+        <div id="communityReviews" style="display:none">
+          <div class="review-list" id="reviewsList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: Post Detail ===== -->
+  <div class="page" id="page-post-detail">
+    <div class="page-section">
+      <div class="post-detail" id="postDetailContent"></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: Wallet ===== -->
+  <div class="page" id="page-wallet">
+    <div class="page-section">
+      <div class="content-area content-narrow">
+        <div class="page-header">
+          <div><h1>我的钱包</h1></div>
+        </div>
+        <div class="balance-grid" id="balanceGrid">
+          <div class="balance-card"><div class="label">可用余额</div><div class="value primary">¥12,580.50</div></div>
+          <div class="balance-card"><div class="label">冻结金额</div><div class="value warning">¥3,200.00</div></div>
+          <div class="balance-card"><div class="label">总资产</div><div class="value accent">¥15,780.50</div></div>
+        </div>
+        <div style="display:flex;gap:12px;margin-bottom:24px">
+          <button class="btn btn-primary btn-lg" onclick="document.getElementById('rechargeModal').classList.add('open')">＋ 充值</button>
+          <button class="btn btn-outline btn-lg" onclick="document.getElementById('withdrawModal').classList.add('open')">↕ 提现</button>
+        </div>
+        <div class="card card-padded" style="margin-bottom:24px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <h3 style="font-size:16px;font-weight:600;color:var(--ink)">交易流水</h3>
+            <div class="radio-group">
+              <button class="active" onclick="filterTx('')">全部</button>
+              <button onclick="filterTx('recharge')">充值</button>
+              <button onclick="filterTx('withdraw')">提现</button>
+              <button onclick="filterTx('income')">赏金</button>
+            </div>
+          </div>
+          <div class="table-wrap" id="txTable"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: Notifications ===== -->
+  <div class="page" id="page-notifications">
+    <div class="page-section">
+      <div class="content-area content-wide">
+        <div class="page-header">
+          <div><h1>通知中心</h1></div>
+          <button class="btn btn-outline btn-sm" onclick="markAllRead()">✓ 全部已读</button>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px">
+          <div class="radio-group">
+            <button class="active" onclick="filterNotifType('')">全部</button>
+            <button onclick="filterNotifType('task')">任务</button>
+            <button onclick="filterNotifType('payment')">资金</button>
+            <button onclick="filterNotifType('system')">系统</button>
+            <button onclick="filterNotifType('verification')">认证</button>
+            <button onclick="filterNotifType('community')">社区</button>
+          </div>
+          <div class="radio-group">
+            <button class="active" onclick="filterNotifRead('')">全部</button>
+            <button onclick="filterNotifRead('unread')">未读</button>
+            <button onclick="filterNotifRead('read')">已读</button>
+          </div>
+        </div>
+        <div class="notif-list" id="notifList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: Profile ===== -->
+  <div class="page" id="page-profile">
+    <div class="profile-page">
+      <h1>个人设置</h1>
+      <div class="profile-card">
+        <div class="tabs">
+          <button class="tab active" data-tab="profile-tab" onclick="switchProfileTab('profile')">基本资料</button>
+          <button class="tab" data-tab="verify-tab" onclick="switchProfileTab('verify')">🔒 实名认证</button>
+        </div>
+        <div id="profileTabContent">
+          <div class="avatar-section">
+            <div class="avatar-large">👤</div>
+            <div>
+              <button class="avatar-upload-btn">更换头像</button>
+              <p class="avatar-hint">支持 JPG、PNG 格式，大小不超过 2MB</p>
+            </div>
+          </div>
+          <form onsubmit="handleProfileUpdate(event)">
+            <div class="form-group"><label>用户名</label><input class="input" value="testuser" id="profileUsername" required></div>
+            <div class="form-group"><label>邮箱</label><input class="input" type="email" value="test@example.com" id="profileEmail" required></div>
+            <div class="form-group"><label>个人简介</label><textarea class="input" rows="3" id="profileBio" placeholder="介绍一下自己" style="resize:vertical;min-height:80px;height:auto;padding-top:12px;line-height:1.6"></textarea></div>
+            <div class="form-group"><label>所在地</label><input class="input" placeholder="例如：北京、上海" id="profileLocation"></div>
+            <div class="form-group"><label>兴趣标签</label>
+              <select class="select" multiple id="profileInterests" style="height:auto;min-height:100px;background-image:none;padding:8px">
+                <option value="设计">🎨 设计</option>
+                <option value="开发">💻 开发</option>
+                <option value="文案">✍️ 文案</option>
+                <option value="翻译">🌐 翻译</option>
+                <option value="推广">📢 推广</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" type="submit">保存修改</button>
+          </form>
+        </div>
+        <div id="verifyTabContent" style="display:none">
+          <div class="card card-padded" style="margin-bottom:24px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+              <span style="font-size:14px;color:var(--ink-muted)">认证状态</span>
+              <span class="tag tag-gray">未认证</span>
+            </div>
+          </div>
+          <p style="font-size:14px;color:var(--ink-secondary);margin-bottom:16px">完成实名认证后，您将获得平台信任标识，提升任务接取成功率。</p>
+          <form onsubmit="handleVerifySubmit(event)">
+            <div class="form-group"><label>真实姓名</label><input class="input" placeholder="请输入身份证上的姓名" id="verifyName" required></div>
+            <div class="form-group"><label>身份证号</label><input class="input" placeholder="请输入 18 位身份证号" id="verifyIdCard" required pattern="(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)"></div>
+            <button class="btn btn-primary" type="submit">提交认证</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: Published Tasks ===== -->
+  <div class="page" id="page-published">
+    <div class="page-section">
+      <div class="content-area content-wide">
+        <div class="page-header">
+          <div><h1>我发布的任务</h1><p>管理您发布的所有任务</p></div>
+          <button class="btn btn-primary" onclick="navigateTo('tasks')">发布新任务</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>任务标题</th><th>赏金</th><th>状态</th><th>申请人数</th><th>截止日期</th><th>发布时间</th><th>操作</th></tr></thead>
+            <tbody id="publishedTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: Applied Tasks ===== -->
+  <div class="page" id="page-applied">
+    <div class="page-section">
+      <div class="content-area content-wide">
+        <div class="page-header">
+          <div><h1>我接取的任务</h1><p>管理您申请和接取的所有任务</p></div>
+          <button class="btn btn-outline" onclick="navigateTo('tasks')">浏览任务大厅</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>任务标题</th><th>发布者</th><th>赏金</th><th>申请状态</th><th>任务状态</th><th>截止日期</th><th>申请时间</th><th>操作</th></tr></thead>
+            <tbody id="appliedTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Recharge Modal ===== -->
+  <div class="modal-overlay" id="rechargeModal">
+    <div class="modal">
+      <div class="modal-header"><h3>充值</h3><button class="modal-close" onclick="document.getElementById('rechargeModal').classList.remove('open')">✕</button></div>
+      <div class="modal-body">
+        <form onsubmit="handleRecharge(event)">
+          <div class="form-group"><label>充值金额</label><input class="input" type="number" id="rechargeAmount" min="1" max="50000" required placeholder="请输入充值金额"></div>
+          <div class="quick-amounts">
+            <button type="button" onclick="document.getElementById('rechargeAmount').value=100">¥100</button>
+            <button type="button" onclick="document.getElementById('rechargeAmount').value=500">¥500</button>
+            <button type="button" onclick="document.getElementById('rechargeAmount').value=1000">¥1,000</button>
+            <button type="button" onclick="document.getElementById('rechargeAmount').value=5000">¥5,000</button>
+            <button type="button" onclick="document.getElementById('rechargeAmount').value=10000">¥10,000</button>
+          </div>
+          <div class="form-group">
+            <label>支付方式</label>
+            <div class="radio-group">
+              <button type="button" class="active" onclick="selectPayment(this,'alipay')">支付宝</button>
+              <button type="button" onclick="selectPayment(this,'wechat')">微信支付</button>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-block btn-lg" type="submit">确认充值</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Withdraw Modal ===== -->
+  <div class="modal-overlay" id="withdrawModal">
+    <div class="modal">
+      <div class="modal-header"><h3>提现</h3><button class="modal-close" onclick="document.getElementById('withdrawModal').classList.remove('open')">✕</button></div>
+      <div class="modal-body">
+        <div class="balance-hint">可用余额：<strong>¥12,580.50</strong></div>
+        <form onsubmit="handleWithdraw(event)">
+          <div class="form-group"><label>提现金额</label><input class="input" type="number" id="withdrawAmount" min="1" required placeholder="请输入提现金额"></div>
+          <div class="form-group"><label>收款人姓名</label><input class="input" id="withdrawName" required placeholder="请输入银行卡持有人姓名"></div>
+          <div class="form-group"><label>开户银行</label><select class="select" id="withdrawBank" required><option value="">请选择银行</option><option>工商银行</option><option>建设银行</option><option>农业银行</option><option>中国银行</option><option>招商银行</option><option>交通银行</option></select></div>
+          <div class="form-group"><label>银行卡号</label><input class="input" id="withdrawAccount" required placeholder="请输入银行卡号"></div>
+          <button class="btn btn-primary btn-block btn-lg" type="submit">确认提现</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo"><div class="logo-icon">⟐</div><span class="logo-text">游民任务</span></div>
+        <p>让每一份技能都有价格。连接全球远程工作者，探索自由的工作方式。</p>
+      </div>
+      <div class="footer-col">
+        <h4>探索</h4>
+        <ul><li><a href="#" onclick="navigateTo('explore');return false">发现内容</a></li><li><a href="#" onclick="navigateTo('tasks');return false">任务大厅</a></li><li><a href="#" onclick="navigateTo('community');return false">社区讨论</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h4>关于</h4>
+        <ul><li><a href="#">关于我们</a></li><li><a href="#">新手指南</a></li><li><a href="#">隐私政策</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h4>支持</h4>
+        <ul><li><a href="#">帮助中心</a></li><li><a href="#">联系我们</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 游民任务. All rights reserved.</p></div>
+  </footer>
+</div>
+  <div class="page" id="page-register">
+    <div class="auth-page">
+      <div class="auth-brand">
+        <div class="auth-brand-content">
+          <div class="auth-brand-logo">
+            <div class="icon-box">⟐</div>
+            <span>游民任务</span>
+          </div>
+          <h2>开始你的<br>自由职业之旅</h2>
+          <p>免费注册，即刻获取远程工作机会</p>
+          <div class="auth-features">
+            <div class="auth-feature">
+              <div class="auth-feature-icon">🛡</div>
+              <div class="auth-feature-text"><div class="f-title">资金担保</div><div class="f-desc">平台托管赏金，完成自动到账</div></div>
+            </div>
+            <div class="auth-feature">
+              <div class="auth-feature-icon">⚡</div>
+              <div class="auth-feature-text"><div class="f-title">实名认证</div><div class="f-desc">真实身份保障，交易更放心</div></div>
+            </div>
+            <div class="auth-feature">
+              <div class="auth-feature-icon">🌐</div>
+              <div class="auth-feature-text"><div class="f-title">远程协作</div><div class="f-desc">线上线下自由选择工作方式</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="auth-form-wrap">
+        <div class="auth-form-inner">
+          <div class="auth-mobile-logo" style="display:flex;justify-content:center;margin-bottom:32px">
+            <div class="logo"><div class="logo-icon">⟐</div><span class="logo-text">游民任务</span></div>
+          </div>
+          <div class="auth-form-box">
+            <h1>创建账号</h1>
+            <p class="auth-subtitle">开启你的自由职业之旅</p>
+            <form onsubmit="handleRegister(event)">
+              <div class="form-group">
+                <div class="input-icon-wrap">
+                  <span class="input-icon">👤</span>
+                  <input class="input" type="text" placeholder="用户名" id="regUsername" required minlength="3">
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="input-icon-wrap">
+                  <span class="input-icon">✉</span>
+                  <input class="input" type="email" placeholder="邮箱" id="regEmail" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="input-icon-wrap">
+                  <span class="input-icon">🔒</span>
+                  <input class="input" type="password" placeholder="密码" id="regPassword" required minlength="6" oninput="checkPwdStrength(this.value)">
+                </div>
+              </div>
+              <div id="pwdStrength" style="display:none" class="pwd-bars">
+                <div class="pwd-bar" id="pwdBar1"></div>
+                <div class="pwd-bar" id="pwdBar2"></div>
+                <div class="pwd-bar" id="pwdBar3"></div>
+              </div>
+              <div class="form-group">
+                <div class="input-icon-wrap">
+                  <span class="input-icon">🔒</span>
+                  <input class="input" type="password" placeholder="确认密码" id="regConfirm" required>
+                </div>
+              </div>
+              <label class="form-checkbox">
+                <input type="checkbox" checked> 我已阅读并同意 <a href="#">服务条款</a> 和 <a href="#">隐私政策</a>
+              </label>
+              <button class="btn btn-primary btn-block btn-lg" type="submit">注册</button>
+            </form>
+            <div class="form-footer">已有账号？<a href="#" onclick="navigateTo('login');return false">立即登录</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== State =====
+let isLoggedIn = false;
+let currentUser = null;
+let notifTypeFilter = '';
+let notifReadFilter = '';
+let txFilter = '';
+let communityTab = 'posts';
+
+// ===== Navigation =====
+function navigateTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + page);
+  if (target) target.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navItem = document.querySelector('.nav-item[data-nav="' + page + '"]');
+  if (navItem) navItem.classList.add('active');
+  hideUserMenu();
+  window.scrollTo(0, 0);
+}
+
+function toggleDrawer() {
+  document.getElementById('drawer').classList.toggle('open');
+  document.getElementById('drawerOverlay').classList.toggle('open');
+}
+
+function toggleUserMenu() {
+  const menu = document.getElementById('userMenu');
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+function hideUserMenu() {
+  document.getElementById('userMenu').style.display = 'none';
+}
+
+function handleLogout() {
+  isLoggedIn = false;
+  currentUser = null;
+  document.getElementById('headerAuth').style.display = 'flex';
+  document.getElementById('headerUser').style.display = 'none';
+  document.getElementById('userMenu').style.display = 'none';
+  navigateTo('home');
+}
+
+// ===== Hero Search =====
+function heroSearch() {
+  const val = document.getElementById('heroSearchInput').value.trim();
+  if (val) {
+    document.getElementById('taskSearchInput').value = val;
+    navigateTo('tasks');
+    filterTasks();
+  }
+}
+
+function searchTag(tag) {
+  document.getElementById('taskSearchInput').value = tag;
+  navigateTo('tasks');
+  filterTasks();
+}
+
+// ===== Password Strength =====
+function checkPwdStrength(pwd) {
+  const el = document.getElementById('pwdStrength');
+  if (!pwd || pwd.length === 0) { el.style.display = 'none'; return; }
+  el.style.display = 'flex';
+  let score = 0;
+  if (pwd.length >= 6) score++;
+  if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) score++;
+  if (/[0-9]/.test(pwd)) score++;
+  if (/[^a-zA-Z0-9]/.test(pwd)) score++;
+  const bars = ['pwdBar1','pwdBar2','pwdBar3'];
+  const classes = ['','weak','medium','strong'];
+  bars.forEach((id, i) => {
+    const bar = document.getElementById(id);
+    bar.className = 'pwd-bar';
+    if (i < score) bar.classList.add('active', classes[score]);
+  });
+}
+
+// ===== Auth =====
+function handleLogin(e) {
+  e.preventDefault();
+  isLoggedIn = true;
+  currentUser = { username: 'testuser' };
+  document.getElementById('headerAuth').style.display = 'none';
+  document.getElementById('headerUser').style.display = 'flex';
+  alert('登录成功！');
+  navigateTo('home');
+}
+
+function handleRegister(e) {
+  e.preventDefault();
+  const pwd = document.getElementById('regPassword').value;
+  const confirm = document.getElementById('regConfirm').value;
+  if (pwd !== confirm) { alert('两次输入的密码不一致'); return; }
+  isLoggedIn = true;
+  currentUser = { username: document.getElementById('regUsername').value };
+  document.getElementById('headerAuth').style.display = 'none';
+  document.getElementById('headerUser').style.display = 'flex';
+  alert('注册成功，欢迎加入！');
+  navigateTo('home');
+}
+
+// ===== Categories =====
+const categories = ['设计', '开发', '文案', '翻译', '推广', '数据标注', '测试', '其他'];
+const categoriesGrid = document.getElementById('categoriesGrid');
+if (categoriesGrid) {
+  categories.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'cat-card';
+    div.onclick = function() { document.getElementById('taskSearchInput').value = c; navigateTo('tasks'); filterTasks(); };
+    div.innerHTML = '<div class="cat-card-title">' + c + '</div><div class="cat-card-action">浏览任务 →</div>';
+    categoriesGrid.appendChild(div);
+  });
+}
+
+// ===== Tasks Data =====
+const taskData = [
+  { id: '1', title: 'React Native 跨平台移动应用开发', desc: '需要一位有经验的 React Native 开发者，开发一款面向数字游民的城市导航应用，支持 iOS 和 Android 平台。', cat: '开发', reward: 15000, applicants: 1, max: 3, type: 'online', status: 'active', deadline: '7天后截止', deadlineDate: new Date(Date.now() + 7*86400000).toISOString(), author: '张三', tags: ['React Native', 'TypeScript', '移动端', 'iOS', 'Android'] },
+  { id: '2', title: '品牌 Logo 及视觉识别系统设计', desc: '为新成立的远程工作协作平台设计完整的品牌视觉识别系统，包括 Logo、色彩方案、字体选择等。', cat: '设计', reward: 8000, applicants: 0, max: 2, type: 'online', status: 'pending', deadline: '14天后截止', deadlineDate: new Date(Date.now() + 14*86400000).toISOString(), author: '李四', tags: ['Logo', '品牌设计', 'VI'] },
+  { id: '3', title: '技术博客文章撰写（中英双语）', desc: '撰写 5 篇关于远程工作最佳实践的技术博客文章，需要中英双语版本，每篇 2000-3000 字。', cat: '文案', reward: 5000, applicants: 2, max: 5, type: 'online', status: 'active', deadline: '10天后截止', deadlineDate: new Date(Date.now() + 10*86400000).toISOString(), author: '王五', tags: ['博客', '技术写作', '中英文'] },
+  { id: '4', title: '电商平台产品描述翻译（中译日）', desc: '将电商平台上的 200 个产品描述从中文翻译为日语，要求翻译准确、自然流畅。', cat: '翻译', reward: 6000, applicants: 1, max: 2, type: 'online', status: 'pending', deadline: '5天后截止', deadlineDate: new Date(Date.now() + 5*86400000).toISOString(), author: '赵六', tags: ['日语翻译', '电商', '产品描述'] },
+  { id: '5', title: '社交媒体营销策略制定', desc: '为数字游民社区制定完整的社交媒体营销策略，包括内容规划、发布计划、KPI 设定等。', cat: '推广', reward: 10000, applicants: 0, max: 1, type: 'online', status: 'pending', deadline: '20天后截止', deadlineDate: new Date(Date.now() + 20*86400000).toISOString(), author: '孙七', tags: ['社媒营销', '策略', '社区运营'] },
+  { id: '6', title: '数据分析仪表盘搭建', desc: '使用 Python + Streamlit 搭建一个数据分析仪表盘，展示用户行为数据和业务指标。', cat: '数据标注', reward: 12000, applicants: 0, max: 2, type: 'online', status: 'active', deadline: '12天后截止', deadlineDate: new Date(Date.now() + 12*86400000).toISOString(), author: '周八', tags: ['Python', '数据分析', 'Streamlit'] },
+];
+
+function renderTaskCard(t) {
+  const statusColors = { pending: 'tag-purple', active: 'tag-green', completed: 'tag-blue', cancelled: 'tag-red' };
+  const statusLabels = { pending: '待审核', active: '进行中', completed: '已完成', cancelled: '已取消' };
+  return '<div class="task-card" onclick="showTaskDetail(\'' + t.id + '\')">'
+    + '<div class="task-card-header"><div class="task-card-title">' + t.title + '</div><span class="tag ' + (statusColors[t.status] || 'tag-purple') + '">' + (statusLabels[t.status] || t.status) + '</span></div>'
+    + '<div class="task-card-desc">' + t.desc + '</div>'
+    + '<div class="task-card-tags"><span class="tag tag-purple">' + t.cat + '</span><span class="tag tag-green">远程</span>'
+    + t.tags.slice(0,2).map(tg => '<span class="tag tag-gray">' + tg + '</span>').join('')
+    + (t.tags.length > 2 ? '<span class="tag tag-gray">+' + (t.tags.length - 2) + '</span>' : '') + '</div>'
+    + '<div class="task-card-reward"><div class="task-card-price">¥' + t.reward.toLocaleString() + '</div><div class="task-card-applicants">👥 ' + t.applicants + '/' + t.max + '</div></div>'
+    + '<div class="task-card-footer"><div class="task-card-publisher"><div class="task-card-avatar">' + t.author[0] + '</div><span class="task-card-name">' + t.author + '</span></div>'
+    + '<div class="task-card-meta"><span>⏰ ' + t.deadline + '</span></div></div></div>';
+}
+
+// ===== Task Filter & List =====
+const categoriesForFilter = ['', ...categories];
+function initCategoryFilter() {
+  const el = document.getElementById('taskCategoryFilter');
+  if (!el) return;
+  const labels = ['全部类别', ...categories];
+  categoriesForFilter.forEach((c, i) => {
+    const label = document.createElement('label');
+    label.innerHTML = '<input type="radio" name="catFilter" value="' + c + '"' + (i === 0 ? ' checked' : '') + ' onchange="filterTasks()"> ' + labels[i];
+    el.appendChild(label);
+  });
+}
+initCategoryFilter();
+
+function filterTasks() {
+  const keyword = (document.getElementById('taskSearchInput').value || '').toLowerCase();
+  const cat = document.querySelector('input[name="catFilter"]:checked');
+  const category = cat ? cat.value : '';
+  const type = document.querySelector('input[name="typeFilter"]:checked');
+  const typeVal = type ? type.value : '';
+  const sortBy = document.getElementById('taskSortBy').value;
+  let filtered = taskData.filter(t => {
+    if (keyword && !t.title.toLowerCase().includes(keyword) && !t.desc.toLowerCase().includes(keyword)) return false;
+    if (category && t.cat !== category) return false;
+    if (typeVal && t.type !== typeVal) return false;
+    return true;
+  });
+  if (sortBy === 'reward') filtered.sort((a, b) => b.reward - a.reward);
+  else if (sortBy === 'deadline') filtered.sort((a, b) => new Date(a.deadlineDate) - new Date(b.deadlineDate));
+  else filtered.sort((a, b) => b.id - a.id);
+  const grid = document.getElementById('taskGrid');
+  const count = document.getElementById('taskCount');
+  if (grid) grid.innerHTML = filtered.map(renderTaskCard).join('');
+  if (count) count.textContent = filtered.length;
+}
+
+function resetFilters() {
+  document.querySelectorAll('input[name="catFilter"]').forEach((r, i) => { if (i === 0) r.checked = true; });
+  document.querySelectorAll('input[name="typeFilter"]').forEach((r, i) => { if (i === 0) r.checked = true; });
+  document.getElementById('taskSearchInput').value = '';
+  document.getElementById('taskSortBy').value = 'createdAt';
+  filterTasks();
+}
+
+// ===== Task Detail =====
+function showTaskDetail(id) {
+  const t = taskData.find(x => x.id === id);
+  if (!t) return;
+  const detail = document.getElementById('taskDetailContent');
+  detail.innerHTML = '';
+  const main = document.createElement('div');
+  main.className = 'detail-main';
+  main.innerHTML = '<button class="back-btn" onclick="navigateTo(\'tasks\')">← 返回任务大厅</button>'
+    + '<div class="detail-card"><h1 class="detail-title">' + t.title + '</h1><div class="detail-meta"><span class="tag tag-purple">' + t.cat + '</span><span class="tag tag-green">远程</span>'
+    + t.tags.map(tg => '<span class="tag tag-gray">' + tg + '</span>').join('') + '</div><div class="detail-date">发布于 ' + new Date().toLocaleDateString('zh-CN') + '</div></div>'
+    + '<div class="detail-card"><h2 style="font-size:18px;font-weight:600;margin-bottom:16px;color:var(--ink)">任务描述</h2><div class="detail-desc">' + t.desc + '\n\n## 主要功能\n\n1. 高质量完成交付\n2. 按时提交成果\n3. 良好的沟通协作\n\n## 技术要求\n\n- 相关领域经验\n- 良好的沟通能力\n- 按时交付能力\n\n## 交付标准\n\n- 完整的交付物\n- 符合要求的质量</div></div>'
+    + '<div class="detail-card"><h2 style="font-size:18px;font-weight:600;margin-bottom:16px;color:var(--ink)">申请接单</h2>'
+    + '<p style="color:var(--ink-muted);margin-bottom:16px">如果你有能力完成这个任务，请提交申请说明你的相关经验和计划。</p>'
+    + '<button class="btn btn-primary btn-block btn-lg" onclick="' + (isLoggedIn ? 'alert(\'申请已提交！(演示模式)\')' : 'alert(\'请先登录\')') + '">' + (isLoggedIn ? '申请接单' : '请先登录') + '</button></div>';
+  const sidebar = document.createElement('div');
+  sidebar.className = 'detail-sidebar';
+  sidebar.innerHTML = '<div class="detail-reward-card"><div class="reward-label">任务赏金</div><div class="reward-amount">¥' + t.reward.toLocaleString() + '</div>'
+    + '<div class="detail-info"><div class="detail-info-item"><span class="label">⏰ 截止时间</span><span>' + t.deadline + '</span></div>'
+    + '<div class="detail-info-item"><span class="label">👥 申请人数</span><span>' + t.applicants + '/' + t.max + '</span></div>'
+    + '<div class="detail-info-item"><span class="label">💼 工作类型</span><span>远程</span></div></div></div>'
+    + '<div class="detail-publisher"><h3>发布者</h3><div class="detail-publisher-info"><div class="detail-publisher-avatar">' + t.author[0] + '</div><div><div class="detail-publisher-name">' + t.author + '</div><div class="detail-publisher-bio">资深从业者</div></div></div></div>';
+  detail.appendChild(main);
+  detail.appendChild(sidebar);
+  navigateTo('task-detail');
+}
+
+// ===== Explore =====
+function exploreSearch() {
+  const val = document.getElementById('exploreSearch').value.trim();
+  if (!val) { document.getElementById('exploreContent').style.display = 'block'; document.getElementById('exploreResults').style.display = 'none'; return; }
+  const results = taskData.filter(t => t.title.toLowerCase().includes(val.toLowerCase()) || t.desc.toLowerCase().includes(val.toLowerCase()));
+  const el = document.getElementById('exploreResults');
+  el.style.display = 'block';
+  document.getElementById('exploreContent').style.display = 'none';
+  if (results.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><h3>未找到相关任务</h3><p>尝试其他关键词</p></div>';
+  } else {
+    el.innerHTML = '<h2 style="font-size:22px;font-weight:700;color:var(--ink);margin-bottom:16px">搜索结果</h2><div class="grid-3">' + results.map(renderTaskCard).join('') + '</div>';
+  }
+}
+
+// Init explore
+function initExplore() {
+  const rec = document.getElementById('exploreRecommended');
+  if (rec) rec.innerHTML = taskData.slice(0,4).map(renderTaskCard).join('');
+  const pop = document.getElementById('explorePopular');
+  if (pop) pop.innerHTML = taskData.map(renderTaskCard).join('');
+  const cat = document.getElementById('exploreCategories');
+  if (cat) {
+    categories.forEach(c => {
+      const count = taskData.filter(t => t.cat === c).length;
+      const div = document.createElement('div');
+      div.className = 'cat-card';
+      div.onclick = function() { document.getElementById('taskSearchInput').value = c; navigateTo('tasks'); filterTasks(); };
+      div.innerHTML = '<div class="cat-card-title">' + c + '</div><div class="cat-card-action">' + count + ' 个任务</div>';
+      cat.appendChild(div);
+    });
+  }
+}
+initExplore();
+
+// ===== Community =====
+const postData = [
+  { id: 'p1', title: '数字游民在巴厘岛的生存指南', excerpt: '分享我在巴厘岛远程工作半年的经验，包括住宿、网络、签证等实用信息。', author: '小明', time: '2小时前', likes: 42, comments: 18, tags: ['远程工作', '旅行'] },
+  { id: 'p2', title: '远程工作工具推荐清单', excerpt: '从沟通协作到时间管理，推荐 10 个提升远程工作效率的必备工具。', author: '小红', time: '5小时前', likes: 38, comments: 15, tags: ['工具', '效率'] },
+  { id: 'p3', title: '如何平衡工作和旅行？', excerpt: '作为一名数字游民，最大的挑战就是如何在工作效率和旅行体验之间找到平衡。', author: '老张', time: '1天前', likes: 56, comments: 24, tags: ['生活方式', '经验'] },
+  { id: 'p4', title: '自由职业者税务指南', excerpt: '各国税务政策解读，以及自由职业者合理避税的建议。', author: 'Lisa', time: '2天前', likes: 31, comments: 12, tags: ['税务', '财务'] },
+  { id: 'p5', title: '我在泰国清迈的 Co-working 体验', excerpt: '清迈是数字游民的天堂，这里的 Co-working space 性价比超高。', author: '小王', time: '3天前', likes: 27, comments: 9, tags: ['Co-working', '泰国'] },
+  { id: 'p6', title: '远程团队沟通的 5 个原则', excerpt: '高效沟通是远程团队成功的关键，分享我们团队总结的沟通原则。', author: 'Alex', time: '4天前', likes: 44, comments: 20, tags: ['团队', '沟通'] },
+];
+
+function renderPostCard(p) {
+  return '<div class="post-card" onclick="showPostDetail(\'' + p.id + '\')">'
+    + '<div class="post-card-author"><div class="post-card-avatar">' + p.author[0] + '</div><div><div class="post-card-name">' + p.author + '</div><div class="post-card-time">' + p.time + '</div></div></div>'
+    + '<div class="post-card-tags">' + p.tags.map(t => '<span class="tag tag-gray">' + t + '</span>').join('') + '</div>'
+    + '<div class="post-card-title">' + p.title + '</div>'
+    + '<div class="post-card-excerpt">' + p.excerpt + '</div>'
+    + '<div class="post-card-stats"><span>❤️ ' + p.likes + '</span><span>💬 ' + p.comments + '</span></div></div>';
+}
+
+function filterPosts() {
+  const kw = (document.getElementById('postSearchInput').value || '').toLowerCase();
+  const grid = document.getElementById('postsGrid');
+  if (!grid) return;
+  const filtered = postData.filter(p => p.title.toLowerCase().includes(kw) || p.excerpt.toLowerCase().includes(kw));
+  grid.innerHTML = filtered.map(renderPostCard).join('');
+}
+
+function switchCommunityTab(tab) {
+  communityTab = tab;
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab[data-tab="' + tab + '"]').classList.add('active');
+  document.getElementById('communityPosts').style.display = tab === 'posts' ? 'block' : 'none';
+  document.getElementById('communityAuthors').style.display = tab === 'authors' ? 'block' : 'none';
+  document.getElementById('communityReviews').style.display = tab === 'reviews' ? 'block' : 'none';
+  if (tab === 'posts') filterPosts();
+  if (tab === 'authors') initAuthors();
+  if (tab === 'reviews') initReviews();
+}
+
+function initAuthors() {
+  const grid = document.getElementById('authorsGrid');
+  if (!grid || grid.children.length > 0) return;
+  const authors = [
+    { name: '张三', tasks: 12, score: 98, verified: true, medal: 0 },
+    { name: '李四', tasks: 8, score: 95, verified: true, medal: 1 },
+    { name: '王五', tasks: 6, score: 92, verified: true, medal: 2 },
+    { name: '赵六', tasks: 5, score: 88, verified: false, medal: -1 },
+    { name: '孙七', tasks: 4, score: 85, verified: true, medal: -1 },
+    { name: '周八', tasks: 3, score: 80, verified: false, medal: -1 },
+  ];
+  grid.innerHTML = authors.map((a, i) => {
+    const medalClass = a.medal >= 0 ? 'medal-' + a.medal : '';
+    return '<div class="author-card">'
+      + '<div class="author-rank">' + (i < 3 ? '<div class="rank-badge">#' + (i + 1) + '</div>' : '<div class="rank-num">#' + (i + 1) + '</div>') + '</div>'
+      + '<div class="author-avatar-lg ' + medalClass + '" style="background:var(--primary-soft);color:var(--primary)">' + a.name[0] + '</div>'
+      + '<div class="author-info"><div class="author-name-wrap"><div class="author-name">' + a.name + '</div>' + (a.verified ? '<span class="tag tag-purple" style="font-size:11px;padding:0 6px;line-height:18px">已认证</span>' : '') + '</div>'
+      + '<div class="author-stats"><span>' + a.tasks + ' 个任务</span><span>信用 ' + a.score + '</span></div></div></div>';
+  }).join('');
+}
+
+function initReviews() {
+  const el = document.getElementById('reviewsList');
+  if (!el || el.children.length > 0) return;
+  el.innerHTML = [
+    { reviewer: '张三', target: '李四', task: '品牌 Logo 设计', rating: 5, content: '非常专业的设计师，交付质量超出预期！' },
+    { reviewer: '王五', target: '赵六', task: '产品描述翻译', rating: 4, content: '翻译质量很好，按时交付，沟通顺畅。' },
+    { reviewer: '孙七', target: '周八', task: '数据仪表盘搭建', rating: 5, content: '技术能力强，快速理解了需求并完美交付。' },
+  ].map(r => '<div class="review-item" onclick="showTaskDetail(\'1\')">'
+    + '<div class="post-avatar">' + r.reviewer[0] + '</div>'
+    + '<div><div class="review-meta"><span class="reviewer-name">' + r.reviewer + '</span>⭐'.repeat(r.rating) + '<span style="font-size:13px;color:var(--ink-muted)">评价了 ' + r.target + '</span></div>'
+    + '<div class="review-task">任务：' + r.task + '</div>'
+    + '<div class="review-content">"' + r.content + '"</div></div></div>').join('');
+}
+
+// ===== Post Detail =====
+function showPostDetail(id) {
+  const p = postData.find(x => x.id === id);
+  if (!p) return;
+  const el = document.getElementById('postDetailContent');
+  el.innerHTML = '<button class="back-btn" onclick="navigateTo(\'community\')">← 返回社区</button>'
+    + '<div class="post-author"><div class="post-author-left"><div class="post-avatar">' + p.author[0] + '</div><div><div class="post-author-name">' + p.author + '</div><div class="post-author-meta">' + p.time + ' · 128 次浏览</div></div></div></div>'
+    + '<h1 class="post-title">' + p.title + '</h1>'
+    + '<div class="post-content">' + p.excerpt + '\n\n' + p.excerpt + '\n\n希望这些经验对大家有帮助！欢迎在评论区讨论交流。\n\n#数字游民 #远程工作 #自由职业</div>'
+    + '<div class="post-card-tags" style="margin-bottom:24px">' + p.tags.map(t => '<span class="tag tag-purple">' + t + '</span>').join('') + '</div>'
+    + '<div class="post-actions"><button class="post-action-btn liked">❤️ ' + p.likes + '</button><span class="post-action-btn">💬 ' + p.comments + '</span><button class="post-action-btn" onclick="navigator.clipboard.writeText(window.location.href);alert(\'链接已复制\')">📤 分享</button></div>'
+    + '<div class="comment-section"><h3>评论 (' + p.comments + ')</h3>'
+    + '<div class="comment-input-wrap"><div class="comment-avatar">' + (isLoggedIn ? (currentUser?.username?.[0] || 'U') : '?') + '</div><input class="input input-round" placeholder="写下你的评论..." id="commentInput" onkeydown="if(event.key===\'Enter\'){if(isLoggedIn){alert(\'评论已发布！\');this.value=\'\'}else{alert(\'请先登录\')}}"></div>'
+    + '<div class="comment-item"><div class="comment-avatar">A</div><div><div class="post-author-name">Alice <span style="font-size:12px;color:var(--ink-muted);font-weight:400">1小时前</span></div><div class="comment-text">写得很好，很有帮助！我也有类似的经历。</div></div></div>'
+    + '<div class="comment-item"><div class="comment-avatar">B</div><div><div class="post-author-name">Bob <span style="font-size:12px;color:var(--ink-muted);font-weight:400">30分钟前</span></div><div class="comment-text">感谢分享，收藏了！</div></div></div></div>';
+  navigateTo('post-detail');
+}
+
+// ===== Wallet =====
+function filterTx(type) {
+  txFilter = type;
+  document.querySelectorAll('#page-wallet .radio-group button').forEach(b => b.classList.remove('active'));
+  const btns = document.querySelectorAll('#page-wallet .radio-group button');
+  const idx = type === '' ? 0 : type === 'recharge' ? 1 : type === 'withdraw' ? 2 : 3;
+  if (btns[idx]) btns[idx].classList.add('active');
+  renderTxTable();
+}
+
+const txData = [
+  { id: 't1', type: 'recharge', amount: 5000, desc: '支付宝充值', status: 'success', time: '1小时前' },
+  { id: 't2', type: 'income', amount: 15000, desc: '任务「React Native」赏金到账', status: 'success', time: '3小时前' },
+  { id: 't3', type: 'freeze', amount: -3200, desc: '任务「品牌 Logo」保证金冻结', status: 'success', time: '5小时前' },
+  { id: 't4', type: 'withdraw', amount: -2000, desc: '提现到招商银行(尾号 8888)', status: 'pending', time: '8小时前' },
+  { id: 't5', type: 'unfreeze', amount: 800, desc: '任务「数据分析」保证金解冻', status: 'success', time: '1天前' },
+  { id: 't6', type: 'recharge', amount: 10000, desc: '微信充值', status: 'success', time: '2天前' },
+  { id: 't7', type: 'withdraw', amount: -5000, desc: '提现到工商银行(尾号 6666)', status: 'success', time: '3天前' },
+];
+
+const txTypeLabels = { recharge: '充值', withdraw: '提现', freeze: '冻结', unfreeze: '解冻', income: '赏金', payment: '支付' };
+const txStatusLabels = { pending: '处理中', success: '成功', failed: '失败' };
+const txStatusColors = { pending: 'tag-orange', success: 'tag-green', failed: 'tag-red' };
+
+function renderTxTable() {
+  const el = document.getElementById('txTable');
+  if (!el) return;
+  let filtered = txFilter ? txData.filter(t => t.type === txFilter) : txData;
+  el.innerHTML = '<table><thead><tr><th>类型</th><th>金额</th><th>说明</th><th>状态</th><th>时间</th></tr></thead><tbody>'
+    + filtered.map(t => '<tr><td><span class="tag tag-purple">' + (txTypeLabels[t.type] || t.type) + '</span></td>'
+    + '<td style="font-weight:600;color:' + (t.amount >= 0 ? 'var(--accent)' : '#EF4444') + '">' + (t.amount >= 0 ? '+' : '') + t.amount.toFixed(2) + '</td>'
+    + '<td>' + t.desc + '</td><td><span class="tag ' + (txStatusColors[t.status] || 'tag-gray') + '">' + (txStatusLabels[t.status] || t.status) + '</span></td>'
+    + '<td>' + t.time + '</td></tr>').join('')
+    + '</tbody></table>';
+}
+renderTxTable();
+
+function handleRecharge(e) {
+  e.preventDefault();
+  const amount = parseFloat(document.getElementById('rechargeAmount').value);
+  if (!amount || amount <= 0) { alert('请输入有效金额'); return; }
+  document.getElementById('rechargeModal').classList.remove('open');
+  alert('充值 ¥' + amount.toFixed(2) + ' 成功！(演示模式)');
+}
+
+function handleWithdraw(e) {
+  e.preventDefault();
+  const amount = parseFloat(document.getElementById('withdrawAmount').value);
+  if (!amount || amount <= 0) { alert('请输入有效金额'); return; }
+  document.getElementById('withdrawModal').classList.remove('open');
+  alert('提现申请已提交，预计 1-3 个工作日到账(演示模式)');
+}
+
+function selectPayment(el, method) {
+  el.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ===== Notifications =====
+const notifData = [
+  { id: 'n1', type: 'task', title: '任务申请已通过', content: '您申请的任务「React Native 跨平台移动应用开发」已被发布者通过。', read: false, time: '10分钟前' },
+  { id: 'n2', type: 'payment', title: '赏金到账通知', content: '任务「品牌 Logo 设计」的赏金 ¥8,000.00 已到账。', read: false, time: '30分钟前' },
+  { id: 'n3', type: 'system', title: '系统维护通知', content: '平台将于本周六凌晨 2:00-4:00 进行系统维护升级。', read: false, time: '2小时前' },
+  { id: 'n4', type: 'community', title: '有人赞了你的帖子', content: '小明赞了你的帖子「数字游民在巴厘岛的生存指南」', read: false, time: '5分钟前' },
+  { id: 'n5', type: 'community', title: '新评论通知', content: '小红评论了你的帖子：推荐的很实用！', read: false, time: '2小时前' },
+  { id: 'n6', type: 'verification', title: '实名认证审核通过', content: '恭喜！您的实名认证已通过审核。', read: true, time: '5小时前' },
+  { id: 'n7', type: 'task', title: '任务即将截止', content: '您接取的任务「技术博客文章撰写」将在 2 天后截止。', read: true, time: '8小时前' },
+  { id: 'n8', type: 'payment', title: '提现申请已受理', content: '您申请的提现 ¥2,000.00 已受理。', read: true, time: '12小时前' },
+  { id: 'n9', type: 'system', title: '新功能上线通知', content: '平台新增「技能认证」功能。', read: true, time: '1天前' },
+  { id: 'n10', type: 'verification', title: '认证提醒', content: '完成实名认证可提升您的任务接取成功率。', read: true, time: '5天前' },
+];
+
+const notifIcons = { system: '⚙️', task: '📄', payment: '💰', verification: '🛡', community: '💬' };
+const notifColors = { system: 'tag-blue', task: 'tag-green', payment: 'tag-orange', verification: 'tag-purple', community: 'tag-purple' };
+
+function renderNotifs() {
+  const el = document.getElementById('notifList');
+  if (!el) return;
+  let filtered = notifData;
+  if (notifTypeFilter) filtered = filtered.filter(n => n.type === notifTypeFilter);
+  if (notifReadFilter === 'unread') filtered = filtered.filter(n => !n.read);
+  if (notifReadFilter === 'read') filtered = filtered.filter(n => n.read);
+  el.innerHTML = filtered.map(n => '<div class="notif-item' + (!n.read ? ' unread' : '') + '">'
+    + '<div class="notif-icon ' + (!n.read ? 'unread' : 'read') + '" style="font-size:16px">' + (notifIcons[n.type] || '📋') + '</div>'
+    + '<div class="notif-content"><div class="notif-title">'
+    + '<span class="title-text' + (n.read ? ' read' : '') + '">' + n.title + '</span>'
+    + '<span class="tag ' + (notifColors[n.type] || 'tag-gray') + '" style="font-size:11px;padding:0 6px;line-height:18px">' + n.type + '</span>'
+    + (!n.read ? '<span class="notif-dot"></span>' : '') + '</div>'
+    + '<div class="notif-body">' + n.content + '</div>'
+    + '<span class="notif-time">' + n.time + '</span></div></div>').join('');
+}
+renderNotifs();
+
+function filterNotifType(type) {
+  notifTypeFilter = type;
+  document.querySelectorAll('#page-notifications .radio-group:first-child button').forEach(b => b.classList.remove('active'));
+  const btns = document.querySelectorAll('#page-notifications .radio-group:first-child button');
+  const types = ['', 'task', 'payment', 'system', 'verification', 'community'];
+  const idx = types.indexOf(type);
+  if (btns[idx]) btns[idx].classList.add('active');
+  renderNotifs();
+}
+
+function filterNotifRead(read) {
+  notifReadFilter = read;
+  document.querySelectorAll('#page-notifications .radio-group:last-child button').forEach(b => b.classList.remove('active'));
+  const btns = document.querySelectorAll('#page-notifications .radio-group:last-child button');
+  const reads = ['', 'unread', 'read'];
+  const idx = reads.indexOf(read);
+  if (btns[idx]) btns[idx].classList.add('active');
+  renderNotifs();
+}
+
+function markAllRead() {
+  notifData.forEach(n => n.read = true);
+  renderNotifs();
+  alert('全部已读');
+}
+
+// ===== Profile =====
+function switchProfileTab(tab) {
+  document.querySelectorAll('#page-profile .tabs .tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('#page-profile .tab[data-tab="' + tab + '-tab"]').classList.add('active');
+  document.getElementById('profileTabContent').style.display = tab === 'profile' ? 'block' : 'none';
+  document.getElementById('verifyTabContent').style.display = tab === 'verify' ? 'block' : 'none';
+}
+
+function handleProfileUpdate(e) {
+  e.preventDefault();
+  alert('个人资料更新成功！');
+}
+
+function handleVerifySubmit(e) {
+  e.preventDefault();
+  alert('实名认证提交成功，请等待审核(演示模式)');
+}
+
+// ===== Published & Applied Tables =====
+function initPublished() {
+  const el = document.getElementById('publishedTable');
+  if (!el) return;
+  const statusLabels = { pending: '待审核', active: '进行中', completed: '已完成', cancelled: '已取消' };
+  const statusColors = { pending: 'tag-purple', active: 'tag-green', completed: 'tag-blue', cancelled: 'tag-red' };
+  el.innerHTML = taskData.map(t => '<tr>'
+    + '<td><a href="#" onclick="showTaskDetail(\'' + t.id + '\');return false" style="font-weight:500">' + t.title + '</a></td>'
+    + '<td style="color:var(--reward);font-weight:600">¥' + t.reward.toLocaleString() + '</td>'
+    + '<td><span class="tag ' + (statusColors[t.status] || 'tag-gray') + '">' + (statusLabels[t.status] || t.status) + '</span></td>'
+    + '<td>' + t.applicants + '/' + t.max + '</td>'
+    + '<td>' + new Date(t.deadlineDate).toLocaleDateString('zh-CN') + '</td>'
+    + '<td>' + new Date().toLocaleDateString('zh-CN') + '</td>'
+    + '<td><a href="#" onclick="showTaskDetail(\'' + t.id + '\');return false" style="font-size:14px;margin-right:12px">查看</a></td></tr>').join('');
+}
+initPublished();
+
+function initApplied() {
+  const el = document.getElementById('appliedTable');
+  if (!el) return;
+  const appStatus = { pending: '待审核', approved: '已通过', rejected: '已驳回', completed: '已完成' };
+  const appColors = { pending: 'tag-orange', approved: 'tag-green', rejected: 'tag-red', completed: 'tag-blue' };
+  const taskStatus = { pending: '待审核', active: '进行中', completed: '已完成', cancelled: '已取消' };
+  const taskColors = { pending: 'tag-purple', active: 'tag-green', completed: 'tag-blue', cancelled: 'tag-red' };
+  const appliedData = [
+    { id: 'a1', title: '电商平台产品描述翻译（中译日）', author: '赵六', reward: 6000, appStatus: 'approved', taskStatus: 'active', deadline: new Date(Date.now() + 5*86400000).toISOString(), applyTime: new Date(Date.now() - 2*86400000).toISOString() },
+    { id: 'a2', title: '社交媒体营销策略制定', author: '孙七', reward: 10000, appStatus: 'pending', taskStatus: 'pending', deadline: new Date(Date.now() + 20*86400000).toISOString(), applyTime: new Date(Date.now() - 6*86400000).toISOString() },
+    { id: 'a3', title: '数据分析仪表盘搭建', author: '周八', reward: 12000, appStatus: 'completed', taskStatus: 'active', deadline: new Date(Date.now() + 12*86400000).toISOString(), applyTime: new Date(Date.now() - 10*86400000).toISOString() },
+    { id: 'a4', title: '技术博客文章撰写（中英双语）', author: '王五', reward: 5000, appStatus: 'completed', taskStatus: 'completed', deadline: new Date(Date.now() - 3*86400000).toISOString(), applyTime: new Date(Date.now() - 18*86400000).toISOString() },
+  ];
+  el.innerHTML = appliedData.map(t => '<tr>'
+    + '<td><a href="#" onclick="showTaskDetail(\'' + t.id + '\');return false" style="font-weight:500">' + t.title + '</a></td>'
+    + '<td>' + t.author + '</td>'
+    + '<td style="color:var(--reward);font-weight:600">¥' + t.reward.toLocaleString() + '</td>'
+    + '<td><span class="tag ' + (appColors[t.appStatus] || 'tag-gray') + '">' + (appStatus[t.appStatus] || t.appStatus) + '</span></td>'
+    + '<td><span class="tag ' + (taskColors[t.taskStatus] || 'tag-gray') + '">' + (taskStatus[t.taskStatus] || t.taskStatus) + '</span></td>'
+    + '<td>' + new Date(t.deadline).toLocaleDateString('zh-CN') + '</td>'
+    + '<td>' + new Date(t.applyTime).toLocaleDateString('zh-CN') + '</td>'
+    + '<td><a href="#" onclick="showTaskDetail(\'' + t.id + '\');return false" style="font-size:14px">查看</a></td></tr>').join('');
+}
+initApplied();
+
+// ===== Init on load =====
+document.addEventListener('DOMContentLoaded', function() {
+  filterTasks();
+  filterPosts();
+});
+</script>
+
+</body>
+</html>
